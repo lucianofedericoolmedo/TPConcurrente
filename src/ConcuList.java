@@ -1,12 +1,29 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class ConcuList{
+public class ConcuList extends Thread {
 
-	private List<Integer> values = new ArrayList<Integer>();
+	private List<Integer> values;
+	private int cantMaximaDeThreads;
+	
+	public ConcuList(Integer cantMaximaDeThreads, List<Integer> values){
+		this.values = values;
+		this.setCantMaximaDeThreads(cantMaximaDeThreads);
+	}
+	
+	public int getCantMaximaDeThreads() {
+		return cantMaximaDeThreads;
+	}
+
+	public void setCantMaximaDeThreads(int cantMaximaDeThreads) {
+		this.cantMaximaDeThreads = cantMaximaDeThreads;
+	}
 	
 	public synchronized int size(){
 		return this.values.size();
@@ -55,12 +72,27 @@ public class ConcuList{
         return this.values.stream().filter(s -> s > pivot).collect(Collectors.toList());	
 	}
 	
+	private synchronized int obtenerPosicionDePivot(){
+		return this.values.size() / 2;
+	}
+	
+	private synchronized int obtenerPivot(Integer indice){
+		return this.values.get(indice);
+	}
+	
 	public synchronized List<Integer> quicksort(){
+		
+		/*
+		 * si la cant de threads es igual a la maxima, tengo que esperar
+		 * 
+		 * 
+		 */
+		
 		if (this.values.size() <= 1){
 			return this.values;
 		}
-		int pivot_index = this.values.size() / 2;
-		Integer pivot =  this.values.get(pivot_index);
+		int pivot_index = obtenerPosicionDePivot();
+		Integer pivot =  obtenerPivot(pivot_index);
 		List<Integer> left = this.menoresQue(pivot);
 		List<Integer> right = this.mayoresQue(pivot);
 		/*
@@ -68,7 +100,32 @@ public class ConcuList{
 		 * quicksort(left)
 		 * quicksort(right)
 		 */
+		
+		/*
+		 * tendria que tener un contador de la cant de Threads
+		 * 
+		 *
+		 */
+		new ConcuList(getCantMaximaDeThreads() / 2, left).start();
+		new ConcuList(getCantMaximaDeThreads() / 2, right).start();
+		
+		/*
+		 * hago un signal
+		 */
 		left.add(pivot);
 		return Stream.concat(left.stream(),right.stream()).collect(Collectors.toList());
 	}
+	
+
+	public synchronized void imprimirLista(){
+		System.out.print("ConcuList contiene a: ");
+		this.values.stream().forEach(n ->System.out.print(n));
+	}
+
+	@Override
+	public void run() {
+		quicksort();
+		
+	}
 }
+
