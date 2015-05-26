@@ -1,8 +1,6 @@
-import java.util.ArrayList;
+package tp;
+
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -118,7 +116,7 @@ public class ConcuList extends Thread {
 	
 
 	public synchronized void imprimirLista(){
-		System.out.print("ConcuList contiene a: ");
+		System.out.print("tp.ConcuList contiene a: ");
 		this.values.stream().forEach(n ->System.out.print(n));
 	}
 
