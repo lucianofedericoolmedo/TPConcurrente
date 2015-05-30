@@ -1,69 +1,72 @@
 package tp;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class ListaConcurrente {//extends Thread{
+public class ListaConcurrente {
 	
 	public List<Integer> representacion;
-	public  Integer cantMaximaDeThreads ;
-	public Boolean ordenado= false;
-	public int elementosOrdenados;
-
+	private int threadsDisponibles = 0;
+	
 	public ListaConcurrente (List<Integer> values ){
-		this.representacion = values;
-		this.cantMaximaDeThreads =size()*2;
-		this.elementosOrdenados = 0;
-
+		this.setRepresentacion(values);
+		this.setThreadsDisponibles(values.size());
+	}
+	
+	public synchronized int getThreadsDisponibles() {
+		return threadsDisponibles;
 	}
 
-	public synchronized void procese(){
-		this.elementosOrdenados ++;
-		if (! termineDeOrdenar()){
-			waitWorker();
-		}
-		notifyAll();
-
+	public synchronized void setThreadsDisponibles(int threadsDisponibles) {
+		this.threadsDisponibles = threadsDisponibles;
 	}
-
+	
+	public synchronized void sort(Worker w) {
+		List<Integer> less = new ArrayList<Integer>();
+		List<Integer> more = new ArrayList<Integer>();
+				
+		if (this.noTengoNadaMasQueOrdenar()) {
+			notifyAll();
+			return ;
+		}			
+		
+		int pivot =  this.get(0);
+		
+		more = mayoresQue(pivot);
+		less = menoresQue(pivot);
+		
+		if (getThreadsDisponibles() > 1) {
+			setThreadsDisponibles(getThreadsDisponibles() -1);
+			w.parallelSort(less,pivot,more);
+			
+			
+		} else{
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			w.concatenar(less,pivot,more);}
+	}
+	
+	private synchronized List<Integer> menoresQue(Integer pivot){
+        return this.representacion.stream().filter(s -> s < pivot).collect(Collectors.toList());	
+	}
+	
+	private synchronized List<Integer> mayoresQue(Integer pivot){
+        return this.representacion.stream().filter(s -> s > pivot).collect(Collectors.toList());	
+	}	
+	
 	public synchronized List<Integer> getRepresentacion() {
 		return representacion;
 	}
-
-	public synchronized boolean getOrdenado(){
-		return  ordenado;
+	
+	public synchronized void setRepresentacion(List<Integer> lista) 
+	{	representacion= lista;
 	}
-
-	public synchronized void setRepresentacion(List<Integer> listaInicial) 
-	{	representacion= listaInicial;
-		//listaInicial.stream().forEach(n -> this.add(n));
-	}
-
-	public synchronized void concat(ListaConcurrente less, int pivot, ListaConcurrente more) {
-		less.add(pivot);
-		less.agregarLista(more);
-		this.representacion= less.getRepresentacion();
-		this.setOrdenado();
-		//notifyAll();
-		System.out.println("CONCATENE");
-		System.out.println("Lista Ordenada "+ this.getRepresentacion());
-	}
-
-	public void waitWorker(){
-		try {
-
-				wait();
-
-		} catch (InterruptedException e) {}
-	}
-
-	public synchronized boolean termineDeOrdenar(){
-		return elementosOrdenados == this.size();
-	}
-
-
-
+	
 	public synchronized int size(){
 		return this.representacion.size();
 	}
@@ -75,60 +78,47 @@ public class ListaConcurrente {//extends Thread{
 		
 	public synchronized void set (Integer posicion, Integer elemento){
 		waitLista(posicion);
-		this.representacion.set(posicion, elemento);
+		if (! this.contains(elemento)) {
+			this.representacion.set(posicion, elemento);
+		}
 	}
 
-
-	public synchronized List<Integer> menoresQue(Integer pivot,List<Integer> lista){
-		return representacion.stream().filter(s -> s < pivot).collect(Collectors.toList());
-	}
-
-	public synchronized List<Integer> mayoresQue(Integer pivot,List<Integer> lista){
-		return representacion.stream().filter(s -> s > pivot).collect(Collectors.toList());
-	}
-
-	public synchronized boolean noTengoNadaMasQueOrdenar(){
-		return this.size() == 1;
+	private synchronized boolean noTengoNadaMasQueOrdenar(){
+		return this.size() <= 1;
 	}
 	
 	private synchronized void waitLista(Integer posicion){
-		while (this.size() < posicion || isEmpty()){
+		while (this.size() < posicion || this.isEmpty()){
 			try {
 				wait();
 			} catch (InterruptedException e) {}
 		}
 	}
-	public synchronized void agregarLista(ListaConcurrente list){
-		this.representacion.addAll(list.getRepresentacion());
-	}
 
 	public synchronized void add(Integer elemento) {
 		if (! this.contains(elemento)){
 			this.representacion.add(elemento);
-			this.cantMaximaDeThreads =+2;
+			this.setThreadsDisponibles(this.size());
 			notifyAll();
 		}		
 	}
-	public synchronized void setOrdenado(){
-		this.ordenado= true;
-		notifyAll();
-	}
+	
 	public synchronized boolean isEmpty(){
 		return this.representacion.isEmpty();
 	}
 	
-
-	public synchronized void quickSort() throws  InterruptedException{
-		int prioridadMaxima= size()/2;
-		Worker w = new Worker(this,cantMaximaDeThreads,0,prioridadMaxima);
-		w.sort(this);
-		this.setRepresentacion(w.getLista().getRepresentacion());
+	public synchronized void quickSort() {
+		Worker w = new Worker(this);
+		w.start();
 	}
 	
 	public synchronized boolean contains(Integer elemento){
 		return this.representacion.contains(elemento);
 	}
 
-
+	@Override
+	public synchronized String toString(){
+		return this.representacion.toString();
+	}
 
 }
