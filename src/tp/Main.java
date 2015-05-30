@@ -10,11 +10,9 @@ public class Main {
 	public static void main(String[] args) {
 	
 		List<Integer> elementos = new ArrayList<Integer>() ;
-		ListaConcurrente listaConcurrente = new ListaConcurrente(elementos);
-		
+		ListaConcurrente listaConcurrente = new ListaConcurrente(elementos);		
 		Productor thread1 = new Productor(listaConcurrente);
-		Productor thread2 = new Productor(listaConcurrente);	
-		
+		Productor thread2 = new Productor(listaConcurrente);			
 		Consumidor thread3 = new Consumidor(listaConcurrente);
 		Consumidor thread4 = new Consumidor(listaConcurrente);
 		
