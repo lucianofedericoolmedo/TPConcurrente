@@ -1,18 +1,14 @@
 package tp;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class ListaConcurrente {//extends Thread{
+public class ListaConcurrente {
 	
 	public List<Integer> representacion;
-	public  Integer cantMaximaDeThreads ;
-	public Boolean ordenado= false;
 	
 	public ListaConcurrente (List<Integer> values ){
 		this.representacion = values;
-		this.cantMaximaDeThreads =size()*2;
 	}
 	
 	public synchronized List<Integer> menoresQue(Integer pivot){
@@ -26,9 +22,7 @@ public class ListaConcurrente {//extends Thread{
 	public synchronized List<Integer> getRepresentacion() {
 		return representacion;
 	}
-	public boolean getOrdenado(){
-		return  ordenado;
-	}
+	
 	public synchronized void setRepresentacion(List<Integer> listaInicial) 
 	{	representacion= listaInicial;
 	}
@@ -48,34 +42,28 @@ public class ListaConcurrente {//extends Thread{
 	}
 
 	public synchronized boolean noTengoNadaMasQueOrdenar(){
-		return this.size() == 1;
+		return this.size() <= 1;
 	}
 	
 	private synchronized void waitLista(Integer posicion){
-		while (this.size() < posicion || isEmpty()){
+		while (this.size() < posicion || this.isEmpty()){
 			try {
 				wait();
 			} catch (InterruptedException e) {}
 		}
 	}
-	public void concat(ListaConcurrente list){
-		this.representacion.addAll(list.getRepresentacion());
-	}
+
 	public synchronized void add(Integer elemento) {
 		if (! this.contains(elemento)){
 			this.representacion.add(elemento);
-			this.cantMaximaDeThreads =+2;
 			notifyAll();
 		}		
 	}
-	public void setOrdenado(){
-		this.ordenado= true;
-	}
+	
 	public synchronized boolean isEmpty(){
 		return this.representacion.isEmpty();
 	}
 	
-
 	public synchronized void quickSort() {
 		Worker w = new Worker(this);
 		this.representacion = w.sort().getRepresentacion();
@@ -86,7 +74,7 @@ public class ListaConcurrente {//extends Thread{
 	}
 
 	@Override
-	public String toString(){
+	public synchronized String toString(){
 		return this.representacion.toString();
 	}
 	
@@ -95,11 +83,8 @@ public class ListaConcurrente {//extends Thread{
 		System.out.print(this.toString());
 	}
 	
-	public void remove(Integer i) {
-		this.representacion.remove(Integer.valueOf(i));
+	public synchronized void remove(Integer i) {
+		this.representacion.remove(i);
 		
 	}
-
-
-
 }

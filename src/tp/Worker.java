@@ -5,34 +5,32 @@ import java.util.List;
 
 
 public class Worker extends Thread{
+	
 	private static int THREADS_AVAILABLE = 1;
-	private ListaConcurrente listaInicial;
+	private ListaConcurrente miListaConcurrente;
 	
     
     public Worker(ListaConcurrente listaInicial){
-    	this.listaInicial = listaInicial;
+    	this.miListaConcurrente = listaInicial;
     }
 	
     public ListaConcurrente listaInicial(){
-    	return listaInicial;
+    	return miListaConcurrente;
     }
 	
-		
+    
 	public ListaConcurrente sort() {
 		List<Integer> less = new ArrayList<Integer>();
 		List<Integer> more = new ArrayList<Integer>();
-		
-		int size = listaInicial.size();
-		
-		
-		if (size<=1) return listaInicial;
+				
+		if (miListaConcurrente.noTengoNadaMasQueOrdenar()) return miListaConcurrente;
 		
 		// Elijo al pivot y lo borro
-		int pivot =  listaInicial.get(0);
-		listaInicial.remove(Integer.valueOf(pivot));
+		int pivot =  miListaConcurrente.get(0);
+		miListaConcurrente.remove(Integer.valueOf(pivot));
 		
-		more = listaInicial.mayoresQue(pivot);
-		less = listaInicial.menoresQue(pivot);
+		more = miListaConcurrente.mayoresQue(pivot);
+		less = miListaConcurrente.menoresQue(pivot);
 		
 		
 		// Let recursion begin ...
