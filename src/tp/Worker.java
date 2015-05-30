@@ -5,7 +5,6 @@ import java.util.List;
 
 public class Worker extends Thread{
 	
-	//private static int THREADS_AVAILABLE = 10;
 	private ListaConcurrente miListaConcurrente;
 	
     
