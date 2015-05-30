@@ -6,12 +6,21 @@ import java.util.stream.Collectors;
 public class ListaConcurrente {
 	
 	public List<Integer> representacion;
+	private int threadsDisponibles ;
 	
-	
-	public ListaConcurrente (List<Integer> values ){
+	public ListaConcurrente (List<Integer> values, int threads ){
 		this.representacion = values;
+		this.setThreadsDisponibles(threads);
 	}
 	
+	public int getThreadsDisponibles() {
+		return threadsDisponibles;
+	}
+
+	public void setThreadsDisponibles(int threadsDisponibles) {
+		this.threadsDisponibles = threadsDisponibles;
+	}
+		
 	public synchronized List<Integer> menoresQue(Integer pivot){
         return this.representacion.stream().filter(s -> s < pivot).collect(Collectors.toList());	
 	}

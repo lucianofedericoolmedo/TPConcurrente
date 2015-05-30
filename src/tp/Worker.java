@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Worker extends Thread{
 	
-	private static int THREADS_AVAILABLE = 1;
+	//private static int THREADS_AVAILABLE = 10;
 	private ListaConcurrente miListaConcurrente;
 	
     
@@ -18,31 +18,7 @@ public class Worker extends Thread{
     }
 	
     
-	public ListaConcurrente sort() {
-		List<Integer> less = new ArrayList<Integer>();
-		List<Integer> more = new ArrayList<Integer>();
-				
-		if (miListaConcurrente.noTengoNadaMasQueOrdenar()) return miListaConcurrente;
-		
-		// Elijo al pivot y lo borro
-		int pivot =  miListaConcurrente.get(0);
-		miListaConcurrente.remove(Integer.valueOf(pivot));
-		
-		more = miListaConcurrente.mayoresQue(pivot);
-		less = miListaConcurrente.menoresQue(pivot);
-		
-		
-		// Let recursion begin ...
-		if (THREADS_AVAILABLE > 1) {
-	        THREADS_AVAILABLE--;
-			return parallelSort(less,pivot,more);
-		}
-		else
-			return concatenar(new Worker(new ListaConcurrente (less)).sort(),pivot,
-					new Worker(new ListaConcurrente (more)).sort());
-	}
-	
-	public void sort2() {
+	public void sort() {
 		List<Integer> less = new ArrayList<Integer>();
 		List<Integer> more = new ArrayList<Integer>();
 				
@@ -57,28 +33,24 @@ public class Worker extends Thread{
 		
 		
 		// Let recursion begin ...
-		if (THREADS_AVAILABLE > 1) {
-	        THREADS_AVAILABLE--;
-			parallelSort2(less,pivot,more);
+		if (miListaConcurrente.getThreadsDisponibles() > 1) {
+			miListaConcurrente.setThreadsDisponibles(miListaConcurrente.getThreadsDisponibles() -1);
+			parallelSort(less,pivot,more);
+			
 		}
 		else
-			concatenar2(new Worker(new ListaConcurrente (less)).sort(),pivot,
-					new Worker(new ListaConcurrente (more)).sort());
+			concatenar(less,pivot,more);
 	}
 	
-
-	
-	
-	
-	private void concatenar2(ListaConcurrente less, int pivot,
-			ListaConcurrente more) {
+	private void concatenar(List<Integer> less, int pivot,
+			List<Integer> more) {
 		
 		// Creo la lista que va a mantener a los elementos ordenados
 		List<Integer> sorted = new ArrayList<Integer>();
 		
-		sorted.addAll(less.getRepresentacion());
+		sorted.addAll(less);
 		sorted.add(pivot);
-		sorted.addAll(more.getRepresentacion());
+		sorted.addAll(more);
 		
 		// retorno la lista ordenada
 		
@@ -86,36 +58,21 @@ public class Worker extends Thread{
 		
 	}
 
-	private void parallelSort2(List<Integer> less, int pivot, List<Integer> more) {
-		final ListaConcurrente left = new ListaConcurrente(less), right = new ListaConcurrente(more);
+	private void parallelSort(List<Integer> less, int pivot, List<Integer> more) {
+		final ListaConcurrente left = new ListaConcurrente(less,miListaConcurrente.getThreadsDisponibles()), 
+				right = new ListaConcurrente(more,miListaConcurrente.getThreadsDisponibles());
 		
 		startNewThread(left);
 		startNewThread(right);
 		        
-        THREADS_AVAILABLE++;
-		concatenar(left,pivot,right);
+		miListaConcurrente.setThreadsDisponibles(miListaConcurrente.getThreadsDisponibles() + 1);
+		concatenar(left.getRepresentacion(),pivot,right.getRepresentacion());
 		
 	}
 
-	// Concatena la listas mergeadas de numeros menores y mayores
-	public ListaConcurrente concatenar(ListaConcurrente less, int pivot, ListaConcurrente more) {
-		
-		// Creo la lista que va a mantener a los elementos ordenados
-		List<Integer> sorted = new ArrayList<Integer>();
-		
-		sorted.addAll(less.getRepresentacion());
-		sorted.add(pivot);
-		sorted.addAll(more.getRepresentacion());
-		
-		// retorno la lista ordenada
-		
-		return new ListaConcurrente(sorted);
-	}
-	
-    
     @Override
     public void run() {
-        sort2();
+        sort();
     }
     
     @Override
@@ -128,17 +85,4 @@ public class Worker extends Thread{
         new Worker(listToSort).start();
     }
     
-	
-	// Ordeno los elementos en paralelo y luego concateno las listas resultantes
-	public ListaConcurrente parallelSort(final List<Integer> menoresQue, int pivot, final List<Integer> mayoresQue) {
-		final ListaConcurrente left = new ListaConcurrente(menoresQue), right = new ListaConcurrente(mayoresQue);
-		
-		startNewThread(left);
-		startNewThread(right);
-		        
-        THREADS_AVAILABLE++;
-		return concatenar(left,pivot,right);
-	}
-	
-	
 }
