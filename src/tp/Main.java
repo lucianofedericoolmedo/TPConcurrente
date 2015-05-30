@@ -11,8 +11,8 @@ public class Main {
 	
 		List<Integer> elementos = new ArrayList<Integer>() ;//
 				 //Stream.of(1,110,55,34,44,22,66,77,12,4).collect(Collectors.toList());
-		int threadsDisponibles = 9;
-		ListaConcurrente listaConcurrente = new ListaConcurrente(elementos,threadsDisponibles);
+		
+		ListaConcurrente listaConcurrente = new ListaConcurrente(elementos);
 		
 		Productor thread1 = new Productor(listaConcurrente);
 		Productor thread2 = new Productor(listaConcurrente);	
@@ -29,8 +29,6 @@ public class Main {
 			
 		listaConcurrente.quickSort();
 		
-		
-		// print results
 		System.out.println("Sorted numbers: " + listaConcurrente);
 		System.out.println("Elements sorted: " + listaConcurrente.size());
 	}

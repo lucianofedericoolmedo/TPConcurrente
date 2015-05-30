@@ -8,18 +8,18 @@ import java.util.stream.Collectors;
 public class ListaConcurrente {
 	
 	public List<Integer> representacion;
-	private int threadsDisponibles ;
+	private int threadsDisponibles = 0;
 	
-	public ListaConcurrente (List<Integer> values, int threads ){
-		this.representacion = values;
-		this.setThreadsDisponibles(threads);
+	public ListaConcurrente (List<Integer> values ){
+		this.setRepresentacion(values);
+		this.setThreadsDisponibles(values.size());
 	}
 	
-	public int getThreadsDisponibles() {
+	public synchronized int getThreadsDisponibles() {
 		return threadsDisponibles;
 	}
 
-	public void setThreadsDisponibles(int threadsDisponibles) {
+	public synchronized void setThreadsDisponibles(int threadsDisponibles) {
 		this.threadsDisponibles = threadsDisponibles;
 	}
 	
@@ -32,15 +32,11 @@ public class ListaConcurrente {
 			return ;
 		}			
 		
-		// Elijo al pivot y lo borro
 		int pivot =  this.get(0);
-		this.remove(Integer.valueOf(pivot));
 		
 		more = mayoresQue(pivot);
 		less = menoresQue(pivot);
 		
-		
-		// Let recursion begin ...
 		if (getThreadsDisponibles() > 1) {
 			setThreadsDisponibles(getThreadsDisponibles() -1);
 			w.parallelSort(less,pivot,more);
@@ -56,11 +52,11 @@ public class ListaConcurrente {
 			w.concatenar(less,pivot,more);}
 	}
 	
-	public synchronized List<Integer> menoresQue(Integer pivot){
+	private synchronized List<Integer> menoresQue(Integer pivot){
         return this.representacion.stream().filter(s -> s < pivot).collect(Collectors.toList());	
 	}
 	
-	public synchronized List<Integer> mayoresQue(Integer pivot){
+	private synchronized List<Integer> mayoresQue(Integer pivot){
         return this.representacion.stream().filter(s -> s > pivot).collect(Collectors.toList());	
 	}	
 	
@@ -68,8 +64,8 @@ public class ListaConcurrente {
 		return representacion;
 	}
 	
-	public synchronized void setRepresentacion(List<Integer> listaInicial) 
-	{	representacion= listaInicial;
+	public synchronized void setRepresentacion(List<Integer> lista) 
+	{	representacion= lista;
 	}
 	
 	public synchronized int size(){
@@ -86,7 +82,7 @@ public class ListaConcurrente {
 		this.representacion.set(posicion, elemento);
 	}
 
-	public synchronized boolean noTengoNadaMasQueOrdenar(){
+	private synchronized boolean noTengoNadaMasQueOrdenar(){
 		return this.size() <= 1;
 	}
 	
@@ -101,6 +97,7 @@ public class ListaConcurrente {
 	public synchronized void add(Integer elemento) {
 		if (! this.contains(elemento)){
 			this.representacion.add(elemento);
+			this.setThreadsDisponibles(this.size());
 			notifyAll();
 		}		
 	}
@@ -126,10 +123,5 @@ public class ListaConcurrente {
 	public synchronized void imprimirLista(){
 		System.out.print("Esta lista concurrente contiene a: ");
 		System.out.print(this.toString());
-	}
-	
-	public synchronized void remove(Integer i) {
-		this.representacion.remove(i);
-		
 	}
 }

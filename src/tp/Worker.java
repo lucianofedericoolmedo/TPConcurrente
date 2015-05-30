@@ -1,4 +1,5 @@
 package tp;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,6 @@ public class Worker extends Thread{
 	
 	private ListaConcurrente miListaConcurrente;
 	
-    
     public Worker(ListaConcurrente listaInicial){
     	this.miListaConcurrente = listaInicial;
     }
@@ -34,8 +34,8 @@ public class Worker extends Thread{
 	}
 
 	public void parallelSort(List<Integer> less, int pivot, List<Integer> more) {
-		final ListaConcurrente left = new ListaConcurrente(less,miListaConcurrente.getThreadsDisponibles()), 
-				right = new ListaConcurrente(more,miListaConcurrente.getThreadsDisponibles());
+		final ListaConcurrente left = new ListaConcurrente(less), 
+				right = new ListaConcurrente(more);
 		
 		startNewThread(left);
 		startNewThread(right);
@@ -56,7 +56,7 @@ public class Worker extends Thread{
     }
     
 
-  	private synchronized void startNewThread(ListaConcurrente listToSort) {
+  	private void startNewThread(ListaConcurrente listToSort) {
         new Worker(listToSort).start();
     }
     
