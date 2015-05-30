@@ -1,5 +1,7 @@
 package tp;
 
+import prueba.ListaConcurrente;
+
 public class Productor extends Thread{
 	
 	ListaConcurrente buffer;
@@ -20,7 +22,7 @@ public class Productor extends Thread{
 	}
 	
 	public void setearElementos(){
-		for (int n = 0; n < 4; n++)
+		for (int n = 0; n < buffer.size(); n++)
 		{
 			this.buffer.set(n,this.buffer.get(n) + n);
 			System.out.println("El thread " + this.getName() + " obtuvo: " + buffer.get(n));

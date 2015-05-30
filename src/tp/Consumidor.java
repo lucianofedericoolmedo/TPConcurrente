@@ -1,5 +1,7 @@
 package tp;
 
+import prueba.ListaConcurrente;
+
 public class Consumidor extends Thread{
 	
 	ListaConcurrente buffer;
@@ -14,7 +16,7 @@ public class Consumidor extends Thread{
 	
 	
 	public void obtenerElementos(){
-		for (int n = 0; n < 4; n++)
+		for (int n = 0; n < buffer.size(); n++)
 		{
 			System.out.println("El thread " + this.getName() + " obtuvo: " + buffer.get(n));
 		}
