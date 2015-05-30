@@ -66,7 +66,7 @@ public class ListaConcurrente {
 	
 	public synchronized void quickSort() {
 		Worker w = new Worker(this);
-		this.representacion = w.sort().getRepresentacion();
+		w.start();
 	}
 	
 	public synchronized boolean contains(Integer elemento){

@@ -1,5 +1,4 @@
 package tp;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +42,61 @@ public class Worker extends Thread{
 					new Worker(new ListaConcurrente (more)).sort());
 	}
 	
+	public void sort2() {
+		List<Integer> less = new ArrayList<Integer>();
+		List<Integer> more = new ArrayList<Integer>();
+				
+		if (miListaConcurrente.noTengoNadaMasQueOrdenar()) return ;
+		
+		// Elijo al pivot y lo borro
+		int pivot =  miListaConcurrente.get(0);
+		miListaConcurrente.remove(Integer.valueOf(pivot));
+		
+		more = miListaConcurrente.mayoresQue(pivot);
+		less = miListaConcurrente.menoresQue(pivot);
+		
+		
+		// Let recursion begin ...
+		if (THREADS_AVAILABLE > 1) {
+	        THREADS_AVAILABLE--;
+			parallelSort2(less,pivot,more);
+		}
+		else
+			concatenar2(new Worker(new ListaConcurrente (less)).sort(),pivot,
+					new Worker(new ListaConcurrente (more)).sort());
+	}
 	
+
+	
+	
+	
+	private void concatenar2(ListaConcurrente less, int pivot,
+			ListaConcurrente more) {
+		
+		// Creo la lista que va a mantener a los elementos ordenados
+		List<Integer> sorted = new ArrayList<Integer>();
+		
+		sorted.addAll(less.getRepresentacion());
+		sorted.add(pivot);
+		sorted.addAll(more.getRepresentacion());
+		
+		// retorno la lista ordenada
+		
+		this.listaInicial().setRepresentacion(sorted);
+		
+	}
+
+	private void parallelSort2(List<Integer> less, int pivot, List<Integer> more) {
+		final ListaConcurrente left = new ListaConcurrente(less), right = new ListaConcurrente(more);
+		
+		startNewThread(left);
+		startNewThread(right);
+		        
+        THREADS_AVAILABLE++;
+		concatenar(left,pivot,right);
+		
+	}
+
 	// Concatena la listas mergeadas de numeros menores y mayores
 	public ListaConcurrente concatenar(ListaConcurrente less, int pivot, ListaConcurrente more) {
 		
@@ -62,8 +115,14 @@ public class Worker extends Thread{
     
     @Override
     public void run() {
-        sort();
+        sort2();
     }
+    
+    @Override
+    public void start() {
+        run();
+    }
+    
 
   	private synchronized void startNewThread(ListaConcurrente listToSort) {
         new Worker(listToSort).start();
