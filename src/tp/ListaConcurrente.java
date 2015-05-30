@@ -1,4 +1,6 @@
 package tp;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +22,40 @@ public class ListaConcurrente {
 	public void setThreadsDisponibles(int threadsDisponibles) {
 		this.threadsDisponibles = threadsDisponibles;
 	}
+	
+	public synchronized void sort(Worker w) {
+		List<Integer> less = new ArrayList<Integer>();
+		List<Integer> more = new ArrayList<Integer>();
+				
+		if (this.noTengoNadaMasQueOrdenar()) {
+			notifyAll();
+			return ;
+		}			
 		
+		// Elijo al pivot y lo borro
+		int pivot =  this.get(0);
+		this.remove(Integer.valueOf(pivot));
+		
+		more = mayoresQue(pivot);
+		less = menoresQue(pivot);
+		
+		
+		// Let recursion begin ...
+		if (getThreadsDisponibles() > 1) {
+			setThreadsDisponibles(getThreadsDisponibles() -1);
+			w.parallelSort(less,pivot,more);
+			
+			
+		} else{
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			w.concatenar(less,pivot,more);}
+	}
+	
 	public synchronized List<Integer> menoresQue(Integer pivot){
         return this.representacion.stream().filter(s -> s < pivot).collect(Collectors.toList());	
 	}

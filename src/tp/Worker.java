@@ -15,33 +15,9 @@ public class Worker extends Thread{
     public ListaConcurrente listaInicial(){
     	return miListaConcurrente;
     }
+
 	
-    
-	public void sort() {
-		List<Integer> less = new ArrayList<Integer>();
-		List<Integer> more = new ArrayList<Integer>();
-				
-		if (miListaConcurrente.noTengoNadaMasQueOrdenar()) return ;
-		
-		// Elijo al pivot y lo borro
-		int pivot =  miListaConcurrente.get(0);
-		miListaConcurrente.remove(Integer.valueOf(pivot));
-		
-		more = miListaConcurrente.mayoresQue(pivot);
-		less = miListaConcurrente.menoresQue(pivot);
-		
-		
-		// Let recursion begin ...
-		if (miListaConcurrente.getThreadsDisponibles() > 1) {
-			miListaConcurrente.setThreadsDisponibles(miListaConcurrente.getThreadsDisponibles() -1);
-			parallelSort(less,pivot,more);
-			
-		}
-		else
-			concatenar(less,pivot,more);
-	}
-	
-	private void concatenar(List<Integer> less, int pivot,
+	public void concatenar(List<Integer> less, int pivot,
 			List<Integer> more) {
 		
 		// Creo la lista que va a mantener a los elementos ordenados
@@ -57,7 +33,7 @@ public class Worker extends Thread{
 		
 	}
 
-	private void parallelSort(List<Integer> less, int pivot, List<Integer> more) {
+	public void parallelSort(List<Integer> less, int pivot, List<Integer> more) {
 		final ListaConcurrente left = new ListaConcurrente(less,miListaConcurrente.getThreadsDisponibles()), 
 				right = new ListaConcurrente(more,miListaConcurrente.getThreadsDisponibles());
 		
@@ -71,7 +47,7 @@ public class Worker extends Thread{
 
     @Override
     public void run() {
-        sort();
+        miListaConcurrente.sort(this);
     }
     
     @Override

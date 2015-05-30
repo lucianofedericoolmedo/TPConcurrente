@@ -1,6 +1,5 @@
 package tp;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,8 +10,8 @@ public class Main {
 	public static void main(String[] args) {
 	
 		List<Integer> elementos = //new ArrayList<Integer>() ;//
-				 Stream.of(1,111,34,44,22,66,77,12,4).collect(Collectors.toList());
-		int threadsDisponibles = 10;
+				 Stream.of(1,110,55,34,44,22,66,77,12,4).collect(Collectors.toList());
+		int threadsDisponibles = 9;
 		ListaConcurrente listaConcurrente = new ListaConcurrente(elementos,threadsDisponibles);
 		
 //		Productor thread1 = new Productor(listaConcurrente);
