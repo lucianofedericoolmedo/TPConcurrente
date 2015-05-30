@@ -7,6 +7,7 @@ public class ListaConcurrente {
 	
 	public List<Integer> representacion;
 	
+	
 	public ListaConcurrente (List<Integer> values ){
 		this.representacion = values;
 	}
