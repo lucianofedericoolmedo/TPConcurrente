@@ -9,9 +9,7 @@ public class Main {
 
 	public static void main(String[] args) {
 	
-		List<Integer> elementos = new ArrayList<Integer>() ;//
-				 //Stream.of(1,110,55,34,44,22,66,77,12,4).collect(Collectors.toList());
-		
+		List<Integer> elementos = new ArrayList<Integer>() ;
 		ListaConcurrente listaConcurrente = new ListaConcurrente(elementos);
 		
 		Productor thread1 = new Productor(listaConcurrente);
