@@ -7,17 +7,20 @@ import java.util.stream.Stream;
 
 public class Main {
 
+	
+
 	public static void main(String[] args) {
+		
 	    //Setup
 		List<Integer> listaVacia = new ArrayList<Integer>() ;
-		ListaConcurrente listaConcurrente = new ListaConcurrente(listaVacia);
+		ListaConcurrente listaConcurrente = new ListaConcurrente(listaVacia,2);
         List<Integer> listaVacia2 = new ArrayList<Integer>() ;
-        ListaConcurrente listaProductor= new ListaConcurrente(listaVacia2);
+        ListaConcurrente listaProductor= new ListaConcurrente(listaVacia2, 2);
         List<Integer> listaVacia3 = new ArrayList<Integer>() ;
-        ListaConcurrente listaCompartida1= new ListaConcurrente(listaVacia3);
+        ListaConcurrente listaCompartida1= new ListaConcurrente(listaVacia3, 2);
         List<Integer> listaVacia4 = new ArrayList<Integer>() ;
-        ListaConcurrente listaCompartida2= new ListaConcurrente(listaVacia4);
-
+        ListaConcurrente listaCompartida2= new ListaConcurrente(listaVacia4, 2);
+        ListaConcurrente listaConMuchosElementos = new ListaConcurrente(new ArrayList<Integer>(), 2);
 
         // Testo el comportamiento de la ListaConcurrente
         testListaInicializada(listaConcurrente);
@@ -41,8 +44,21 @@ public class Main {
 
         //Testo el Ordenamiento de las listas
         testDeOrdenamiento(listaConcurrente, listaProductor, listaCompartida1, listaCompartida2);
+        
+        //Testeo el Ordenamiento de las listas con muchos elementos
+        testDeOrdenamientoParaListaConMuchosElementos(listaConMuchosElementos);
     }
 
+	private static void testDeOrdenamientoParaListaConMuchosElementos(ListaConcurrente listaConMuchosElementos) {
+        System.out.println("** Test 16- Testo el ordenamiento de la quinta Lista**");
+        for (int i = 0 ; i < 1000; i++){
+        	listaConMuchosElementos.add(i);
+        }    
+        
+        testeoElOrdenamientoDeLaLista(listaConMuchosElementos);
+    }
+	
+	
     private static void testDeOrdenamiento(ListaConcurrente listaConcurrente, ListaConcurrente listaProductor, ListaConcurrente listaCompartida1, ListaConcurrente listaCompartida2) {
         System.out.println("** Test 12- Testo el ordenamiento de la primer Listas**");
         testeoElOrdenamientoDeLaLista(listaConcurrente);
@@ -55,7 +71,9 @@ public class Main {
     }
 
     private static void testeoElOrdenamientoDeLaLista(ListaConcurrente listaConcurrente) {
-        listaConcurrente.quickSort();
+        try {
+			listaConcurrente.quickSort();
+		} catch (InterruptedException e) {}
         System.out.println("Sorted numbers: " + listaConcurrente);
         System.out.println("Elements sorted: " + listaConcurrente.size());
         System.out.println(" ");
