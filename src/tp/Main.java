@@ -12,48 +12,25 @@ public class Main {
 	public static void main(String[] args) {
 		
 	    //Setup
-		List<Integer> listaVacia = new ArrayList<Integer>() ;
-		ListaConcurrente listaConcurrente = new ListaConcurrente(listaVacia,2);
-        List<Integer> listaVacia2 = new ArrayList<Integer>() ;
-        ListaConcurrente listaProductor= new ListaConcurrente(listaVacia2, 2);
-        List<Integer> listaVacia3 = new ArrayList<Integer>() ;
-        ListaConcurrente listaCompartida1= new ListaConcurrente(listaVacia3, 2);
-        List<Integer> listaVacia4 = new ArrayList<Integer>() ;
-        ListaConcurrente listaCompartida2= new ListaConcurrente(listaVacia4, 2);
-        ListaConcurrente listaConMuchosElementos = new ListaConcurrente(new ArrayList<Integer>(), 2);
+		ListaConcurrente listaConMuchosElementos = new ListaConcurrente(new ArrayList<Integer>(), 5);
 
-        // Testo el comportamiento de la ListaConcurrente
-        testListaInicializada(listaConcurrente);
-        testAgregoUnElementoALaLista(listaConcurrente);
-        testAgregoUnElmentoYestaRepetido(listaConcurrente);
-        testComprueboSiTengoUnElementoEnLaLista(listaConcurrente);
-        testSeteoUnElemento(listaConcurrente);
-        testSeteoUnElementoYEstaRepetido(listaConcurrente);
+        System.out.println("** Test 16- Testo el ordenamiento de la quinta Lista**");
+        for ( Integer i = 10 ; i > 0; i--){
+        	listaConMuchosElementos.add(i);
+        }
+        System.out.println("sin ordenar numbers: " + listaConMuchosElementos);
 
-        //Testo el comportamiento de un Productor
-
-        testInicializoUnProductorYAgrega(listaProductor);
-        testAgregoOtroProductorYAgrega(listaProductor);
-
-        // Testeo  el comportamiento de un consumidor
-        testInicializarConsumidor(listaProductor);
-
-        //Testo el comportamiento de un consumidor con un productor
-        testUnConsumidorYUnProductor(listaCompartida1);
-        testComportamientoDosConsumidoresYUnProductor(listaCompartida2);
-
-        //Testo el Ordenamiento de las listas
-        testDeOrdenamiento(listaConcurrente, listaProductor, listaCompartida1, listaCompartida2);
+        try {
+        	listaConMuchosElementos.quickSort();
+        } catch (InterruptedException e) {}
+        System.out.println("Sorted numbers: " + listaConMuchosElementos);
+        System.out.println("Elements sorted: " + listaConMuchosElementos.size());
+        System.out.println(" ");
         
-        //Testeo el Ordenamiento de las listas con muchos elementos
-        testDeOrdenamientoParaListaConMuchosElementos(listaConMuchosElementos);
     }
 
 	private static void testDeOrdenamientoParaListaConMuchosElementos(ListaConcurrente listaConMuchosElementos) {
-        System.out.println("** Test 16- Testo el ordenamiento de la quinta Lista**");
-        for (int i = 0 ; i < 1000; i++){
-        	listaConMuchosElementos.add(i);
-        }    
+       
         
         testeoElOrdenamientoDeLaLista(listaConMuchosElementos);
     }
@@ -71,12 +48,7 @@ public class Main {
     }
 
     private static void testeoElOrdenamientoDeLaLista(ListaConcurrente listaConcurrente) {
-        try {
-			listaConcurrente.quickSort();
-		} catch (InterruptedException e) {}
-        System.out.println("Sorted numbers: " + listaConcurrente);
-        System.out.println("Elements sorted: " + listaConcurrente.size());
-        System.out.println(" ");
+      
     }
 
     private static void testComportamientoDosConsumidoresYUnProductor(ListaConcurrente listaCompartida2) {

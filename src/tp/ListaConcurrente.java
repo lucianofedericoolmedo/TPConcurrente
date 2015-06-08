@@ -17,20 +17,16 @@ public class ListaConcurrente {
 
 	public synchronized void quickSort() throws InterruptedException {
 		Buffer buffer = new Buffer();
-		CountDownLatch contador = new CountDownLatch(maxThreads); 
-		ExecutorService executorService = Executors.newFixedThreadPool(maxThreads);
-		Range init_range = new Range(0, this.size()-1);
-		buffer.push(init_range); // agrega el trabajo inicial de ordenar toda la lista
-		Runnable task = new Worker(this,buffer,contador) {
-			public void run() {
-				qsort_worker();
-			}
-		};
-		executorService.execute(task);
-		
-		contador.await();
-		executorService.shutdown();
-		Range invalid_range = new Range(1,0);
+		Contador contador = new Contador(this.size()); 
+        
+        for(int i=0; i<this.maxThreads; i++){
+			new Worker(this,buffer,contador).start();
+	        
+        }
+        Range init_range = new Range(0, this.size()-1);
+        buffer.push(init_range);
+        contador.waitZero();
+		Range invalid_range = new Range(-1,0);
 		for (int i = 0 ; i < maxThreads ; i++ ){
 			buffer.push(invalid_range);
 		}
@@ -48,20 +44,19 @@ public class ListaConcurrente {
 		return this.representacion.size();
 	}
 	
-	public synchronized Integer get (Integer posicion){
-		return this.representacion.get(posicion);
+	public  Integer get (int posicion){
+        return this.representacion.get(posicion);
+		
 	}
 		
-	public synchronized void set (Integer posicion, Integer elemento){
-		if (! this.contains(elemento)) {
+	public  void set (int posicion, Integer elemento){
 			this.representacion.set(posicion, elemento);
-		}
+		
 	}
 
 	public synchronized void add(Integer elemento) {
-		if (! this.contains(elemento)){
 			this.representacion.add(elemento);
-		}		
+		
 	}
 	
 	public synchronized boolean isEmpty(){
@@ -76,4 +71,6 @@ public class ListaConcurrente {
 	public synchronized String toString(){
 		return this.representacion.toString();
 	}
+	
+
 }
