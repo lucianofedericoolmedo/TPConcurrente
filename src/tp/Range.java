@@ -10,7 +10,7 @@ public class Range {
 	}
 	
 	public  synchronized boolean isValid() {
-		return  end - start >= 0 ;
+		return  end - start > 0 && start >= 0;
 	}
 	
 	public synchronized boolean isEmpty(){

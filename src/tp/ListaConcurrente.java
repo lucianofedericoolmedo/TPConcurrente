@@ -97,7 +97,7 @@ public class ListaConcurrente {
 	public static void main(String[] args) {
 		
 	    //Setup
-		ListaConcurrente listaConMuchosElementos = new ListaConcurrente(new ArrayList<Integer>(),6);
+		ListaConcurrente listaConMuchosElementos = new ListaConcurrente(new ArrayList<Integer>(),10);
 		System.out.println("** Test 16- Testo el ordenamiento de la quinta Lista**");
 		 for ( Integer i = 10 ; i > 0; i--){
 	        	listaConMuchosElementos.add(i);

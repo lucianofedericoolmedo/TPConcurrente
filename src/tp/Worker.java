@@ -35,7 +35,7 @@ public class Worker extends Thread{
             if (!r.isValid()) 
             	return;
             
-            if (r.size() >=1) {
+            if (r.size() > 0) {
             	int count =l.qsort_partition(r.start,r.end );
             	Range right= new Range(r.start, r.start+count-1);
             	Range left= new Range(r.start+count+ 1 , r.end);
