@@ -7,12 +7,12 @@ public class Contador {
 	}
 	
 	public synchronized void dec(){
+		contador--;
 		if(contador == 0){
 			notifyAll();
 		}
-		contador--;
 	}
-	public int getContador(){
+	public synchronized int getContador(){
 		return this.contador;
 	}
 	public synchronized void waitZero(){
@@ -20,7 +20,6 @@ public class Contador {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -10,11 +10,11 @@ public class Range {
 	}
 	
 	public  synchronized boolean isValid() {
-		return end - start  >= 0 ;
+		return  end - start >= 0 ;
 	}
 	
 	public synchronized boolean isEmpty(){
-		return this.end < this.start;
+		return this.end <= this.start;
 	}
 	
 	public synchronized int size() {

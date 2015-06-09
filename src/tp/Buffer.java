@@ -28,8 +28,8 @@ public class Buffer {
 
 	
 	public synchronized void push(Range v) {
-		getValues().add(v);
 		notifyAll();
+		getValues().add(v);
 	}
 	
 	public synchronized Range pop() {
@@ -40,6 +40,15 @@ public class Buffer {
 		this.getValues().remove(0);
 		notifyAll();
 		return result;
+	}
+	
+	public static void main(String[] args) {
+		Buffer b= new Buffer();
+        Range init_range = new Range(0, 10);
+        b.push(init_range);
+        System.out.println("Rango: " + b.size());
+        b.push(init_range);
+        System.out.println("Rango: " + b.size());
 	}
 }
 	
