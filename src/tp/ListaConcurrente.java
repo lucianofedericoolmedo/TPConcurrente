@@ -1,10 +1,6 @@
 package tp;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ListaConcurrente {
 	
@@ -28,19 +24,16 @@ public class ListaConcurrente {
 		return this.representacion.size();
 	}
 	
-	public   Integer get (int posicion){
-        return this.representacion.get(posicion);
-		
+	public Integer get (int posicion){
+        return this.representacion.get(posicion);		
 	}
 		
-	public    void set (int posicion, Integer elemento){
-		this.representacion.set(posicion, elemento);
-		
+	public void set (int posicion, Integer elemento){
+		this.representacion.set(posicion, elemento);		
 	}
 
 	public synchronized void add(Integer elemento) {
-			this.representacion.add(elemento);
-		
+		this.representacion.add(elemento);		
 	}
 	
 	public synchronized boolean isEmpty(){
@@ -52,7 +45,7 @@ public class ListaConcurrente {
 	}
 
 	@Override
-	public  String toString(){
+	public String toString(){
 		return this.representacion.toString();
 	}
 	
@@ -62,55 +55,34 @@ public class ListaConcurrente {
 		for(int i=0; i< this.maxThreads; i++){
 			new Worker(this,buffer,contador).start();
 		}
-		Range init_range = new Range(0, this.size()-1);
-		buffer.push(init_range);
+		Range rangoInicial = new Range(0, this.size()-1);
+		buffer.push(rangoInicial);
 		contador.waitZero();
-		Range invalid_range = new Range(-1,0);
+		Range rangoInvalido = new Range(-1,0);
 		for (int i = 0 ; i < maxThreads ; i++ ){
-			buffer.push(invalid_range);
+			buffer.push(rangoInvalido);
 		}
 	}
 	
-	public  int qsort_partition(int start, int end) {
+	public int qsort_partition(int inicio, int fin) {
     	int menoresAlPivot = 0;
-        Integer pivot = this.get(start); 
-        int n= start+1;
-
-    	for (int i=n; i <= end; i++) {
-    		
+        Integer pivot = this.get(inicio); 
+        int siguienteAInicio = inicio+1;
+    	for (int i=siguienteAInicio; i <= fin; i++) {    		
     		if (this.get(i) < pivot ) {
-    	        swap(this, i, start + menoresAlPivot);
+    	        swap(i, inicio + menoresAlPivot);
     	        menoresAlPivot++;
     		}
     	}
+    	System.out.println(menoresAlPivot);
 		return menoresAlPivot;
     }
     
-    private  void swap(ListaConcurrente l,int index_a, int index_b) {
-    	
-		Integer a = l.get(index_a);
-		Integer b = l.get(index_b);
-		l.set(index_b, a);
-		l.set(index_a, b);
+	private void swap(int indiceA, int indiceB) {    	
+		Integer elementoEnA = this.get(indiceA);
+		Integer elementoEnB = this.get(indiceB);
+		this.set(indiceB, elementoEnA);
+		this.set(indiceA, elementoEnB);
 	}
-	
-	public static void main(String[] args) {
-		
-	    //Setup
-		ListaConcurrente listaConMuchosElementos = new ListaConcurrente(new ArrayList<Integer>(),10);
-		System.out.println("** Test 16- Testo el ordenamiento de la quinta Lista**");
-		 for ( Integer i = 10 ; i > 0; i--){
-	        	listaConMuchosElementos.add(i);
-	        }
-		
-        System.out.println("sin ordenar numbers: " + listaConMuchosElementos);
-        listaConMuchosElementos.quickSort();
-     
-        System.out.println("Sorted numbers: " + listaConMuchosElementos);
-        System.out.println("Elements sorted: " + listaConMuchosElementos.size());
- 
-        
-    }
-	
 
 }

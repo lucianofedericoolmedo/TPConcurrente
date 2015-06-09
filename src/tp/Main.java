@@ -1,28 +1,22 @@
 package tp;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Main {
-
-	
-
 	public static void main(String[] args) {
+
+		ListaConcurrente listaConMuchosElementos = new ListaConcurrente(new ArrayList<Integer>(),10);
+		System.out.println("** Test - Testo el ordenamiento de la lista con muchos elementos**");
+		 for ( Integer i = 10000 ; i > 0; i--){
+	        	listaConMuchosElementos.add( i );
+	        }
 		
-	    //Setup
-		ListaConcurrente listaConMuchosElementos = new ListaConcurrente(new ArrayList<Integer>(), 2);
-		System.out.println("** Test 16- Testo el ordenamiento de la quinta Lista**");
-        for ( Integer i = 5 ; i > 0; i--){
-        	listaConMuchosElementos.add(i);
-        }
-        System.out.println("sin ordenar numbers: " + listaConMuchosElementos);
+        System.out.println("Lista con elementos sin ordenar: " + listaConMuchosElementos);
         listaConMuchosElementos.quickSort();
      
-        System.out.println("Sorted numbers: " + listaConMuchosElementos);
-        System.out.println("Elements sorted: " + listaConMuchosElementos.size());
- 
+        System.out.println("Lista con elementos ordenados: " + listaConMuchosElementos);
+        System.out.println("Elementos ordenados: " + listaConMuchosElementos.size());
         
     }
+	
 }

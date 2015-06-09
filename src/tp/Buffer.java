@@ -41,14 +41,5 @@ public class Buffer {
 		notifyAll();
 		return result;
 	}
-	
-	public static void main(String[] args) {
-		Buffer b= new Buffer();
-        Range init_range = new Range(0, 10);
-        b.push(init_range);
-        System.out.println("Rango: " + b.size());
-        b.push(init_range);
-        System.out.println("Rango: " + b.size());
-	}
 }
 	
